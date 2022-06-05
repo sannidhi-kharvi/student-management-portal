@@ -1,0 +1,505 @@
+@import url('https://fonts.googleapis.com/css?family=PT+Sans+Narrow:400,700&display=swap');
+
+/*Web page Design*/
+html {
+    background: url('../images/wallpaper.jpg') no-repeat center center fixed; 
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'PT Sans Narrow', sans-serif;
+}
+
+.header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 80px;
+    padding:10px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-sizing: border-box;
+    background: rgba(255,255,255,0);
+    z-index: 100;
+}
+
+.header.active {
+    background: white;
+    -webkit-box-shadow: 0 1px 5px rgba(0, 0, 0, 0.25);
+    -moz-box-shadow: 0 1px 5px rgba(0, 0, 0, 0.25);
+    box-shadow: 0 1px 5px rgba(0, 0, 0, 0.25);
+}
+
+.logo {
+    width:75px;
+    opacity: 0;
+    margin: 20px;
+    padding: 0;
+    animation: fadeIn 0.9s linear forwards;
+}
+
+@keyframes fadeIn
+{
+	0%
+	{
+		opacity: 0;
+	}
+	100%
+	{
+		opacity: 1;
+	}
+}
+
+.header .nav {
+    margin: 0;
+    padding: 0;
+    z-index: 100;	
+    display: flex;
+}
+.header .nav li {   
+    opacity: 0;
+    list-style: none;
+    margin: 0 10px;
+    animation: fadeInRight 0.5s linear forwards;
+}
+
+@keyframes fadeInRight
+{
+    0%
+    {
+	transform: translateX(150px);
+	opacity: 0;
+    }
+    100%
+    {
+	transform: translateX(0);
+	opacity: 1;
+    }
+}
+
+.bannerText {   
+    width:100%;
+    height:85%;
+    position:absolute;
+    top: 15%;
+    padding:10px;
+}
+
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.dropbtn,
+.header .nav li a {
+    text-decoration: none;
+    font-size: 1.2em;
+    color: #000;
+    padding: 5px 10px;
+    letter-spacing: 2px;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #f1f1f1;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
+    animation: fadeIn 0.5s linear forwards;
+}
+
+.dropdown-content a,
+.header .nav li a {
+    color: black;
+    padding: 6px 16px;
+    text-decoration: none;
+    display: block;
+}
+
+.dropdown-content a:hover,
+.dropdown:hover .dropbtn,
+#active,
+.header .nav li a:hover {
+    background: #000;
+    color: #fff;
+}
+
+.dropdown:hover .dropdown-content {
+    display: block;
+}
+
+/*css modal*/
+html {
+    box-sizing:border-box;
+}
+
+*,*:before,*:after {
+    box-sizing:inherit;
+}
+
+body.modal-content {
+    overflow: hidden;
+}
+
+.modal {
+    z-index:300;
+    display:none;
+    padding-top:50px;
+    padding-bottom: 50px;
+    position:fixed;
+    left:0;
+    top:0;
+    width:100%;
+    height:100%;
+    overflow:auto;
+    background-color:rgb(0,0,0);
+    background-color:rgba(0,0,0,0.5);
+}
+
+.container {
+    padding: 10px;
+}
+
+.modal-content {
+    margin:auto;
+    background-color:#fff;
+    position:relative;
+    padding:0;
+    outline:0;
+    width:600px;
+}
+
+header {
+    background:#2196F3;
+    padding:15px;
+    font-size: 23px;
+    text-align: center;
+     color:white;
+}
+
+footer {
+    padding:15px;
+    margin-left: 190px;
+}
+
+.animate-top {
+    position:relative;
+    animation:animatetop 0.4s;
+}
+
+.radio1 {
+    margin: 0 4px 20px 45px;
+}
+
+.select1 {
+    padding: 6px;
+    height: 32px;
+    border-radius: 2px;
+}
+
+.label1 {
+    display: block;
+    margin:0 45px;
+    font-weight: bold;
+}
+
+@keyframes animatetop
+{
+    from{
+    top:-500px;opacity:0;
+}
+    to{
+    top:0;opacity:1;
+}
+}
+
+/*Table Design*/
+table {  
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    border-collapse: collapse; 
+    margin:50px auto;
+}
+
+tr:nth-of-type(odd) { 
+    background: #eee; 
+}
+
+tr:nth-of-type(even) { 
+    background: white; 
+}
+
+th { 
+    background: #3498db; 
+    color: white; 
+    font-weight: bold; 
+}
+
+td, th { 
+    padding: 10px; 
+    border: 1px solid #ccc; 
+    text-align: left; 
+    font-size: 16px;
+}
+
+td[colspan]:not([colspan="1"]) {
+    text-align: center;
+}
+
+/*Edit Button Design*/
+.edit {
+    background-color:#5CB85C;
+    border: none;
+    color: white;
+    padding: 6px 12px;
+    border-radius: 8px;
+    font-size: 15px;
+    cursor: pointer;
+    outline: none;
+    text-decoration:none;
+}
+
+.edit:hover {
+    background-color:#449D44;
+}
+
+.edit:active {
+    background-color: #388238;
+}
+
+/*Delete Button Design*/
+.delete {
+    background-color:#D9534F;
+    border: none;
+    color: white;
+    padding: 6px 12px;
+    border-radius: 8px;
+    font-size: 15px;
+    cursor: pointer;
+    outline: none;
+    text-decoration:none;
+}
+
+.delete:hover {
+    background-color: #EA302C;
+}
+
+.delete:active {
+    background-color: #9D2522;
+    
+}
+
+/*Update Button Design*/
+.update {
+    background-color:royalblue;
+    border: none;
+    color: white;
+    padding: 6px 12px;
+    border-radius: 8px;
+    font-size: 15px;
+    cursor: pointer;
+    outline: none;
+    text-decoration:none;
+}
+
+.update:hover {
+    background-color:#0B7DDA;
+}
+
+.update:active {
+    background-color: #0078D7;
+}
+
+/*Upload Button Design*/
+.upload-div {
+  position: relative;
+  overflow: hidden;
+  display: inline-block;
+}
+
+.upload {
+  border: 1px solid white;
+  color: white;
+  background-color: skyblue;
+  padding: 8px 20px;
+  margin-bottom: 10px;
+  border-radius: 8px;
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.upload-div input[type=file] {
+  font-size: 100px;
+  position: absolute;
+  left: 0;
+  top: 0;
+  opacity: 0;
+}
+
+/*Validation Design*/
+.error {
+    color:red;
+    animation: fadeIn 0.5s linear forwards;
+    padding-left: 45px;
+}
+
+/*Textbox CSS*/
+.form-control,
+.form-control1 {
+    width: 100%;
+    border: 1px solid #aaa;
+    border-radius: 4px;
+    outline: none;
+    padding: 8px;
+    box-sizing: border-box;
+    transition: 0.3s;
+}
+
+.form-control{
+    margin: 0 45px 20px;
+}
+
+.form-control:focus,
+.form-control1:focus{
+    border-color:dodgerBlue;
+    box-shadow:0 0 6px 0 dodgerBlue;
+}
+
+@media screen and (min-width: 480px) {
+  form {
+    max-width: 480px;
+  }
+}
+
+.icenter {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    align-content: center;
+    text-align: center;
+}
+
+/*Search Input Design*/
+.InputAddOn {
+    display: flex;
+    margin-top: 0.5em;
+    margin-left: 5.0em;
+}
+
+.InputAddOn1 {
+    display: flex;
+    margin-top: 1.5em;
+    margin-left: 31em;
+}
+
+.InputAddOn2{
+    display:flex;
+    margin-top: 1.5em;
+    margin-left: 12.5em;
+}
+
+.InputAddOn-field {
+  flex: 1;
+  margin-right: 5.0em;
+  max-width: 15.0em;
+}
+
+.InputAddOn-field1{
+    flex:1;
+    margin-right: 29em;
+    max-width: 15em;
+}
+
+.InputAddOn-field,
+.InputAddOn-field1:not(:first-child) {
+  border-left: 0;
+}
+
+.InputAddOn-item {
+  background-color: #E9ECEF;
+  color: #666666;
+}
+
+.InputAddOn-field,
+.InputAddOn-field1,
+.InputAddOn-item {
+  border: 1px solid rgba(147, 128, 108, 0.25);
+  padding: 0.5em 0.75em;
+}
+
+.InputAddOn-item {
+  border-radius: 4px 0 0 4px;
+}
+
+.InputAddOn-field,
+.InputAddOn-field1{
+  border-radius: 0 4px 4px 0;
+}
+
+/*Date Design*/
+input[type="date"] {
+    position: relative;
+}
+
+input[type="date"]::-webkit-clear-button {
+    -webkit-appearance: none;
+    display: none;
+}
+ 
+input[type="date"]::-webkit-calendar-picker-indicator {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: auto;
+    height: auto;
+    color: transparent;
+    background: transparent;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    display: none;
+}
+
+/* Checked Dropdown Design*/
+.multiselect {
+    width: 100%;
+    top:100%;
+}
+
+.selectBox {
+    position: relative;
+}
+        
+.selectBox select {
+    width: 100%;
+    margin-left: 45px;
+    font-weight: bold;
+}
+
+#checkboxes {
+    display: none;
+    width:100%;
+    margin-left: 45px;
+    border: 1px #dadada solid;
+}
+
+#checkboxes label {
+    display: block;
+    width:100%;
+    margin-left: 0;
+}
+
+#checkboxes label:hover {
+    background-color: #1e90ff;
+}
+

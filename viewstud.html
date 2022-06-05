@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">	
+    <meta charset="utf-8">
+    <title>Student Attendance, Marks Management and SMS Portal</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.9/angular.min.js"></script> 
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="styles/main.css">
+</head>
+<body ng-app="myApp" ng-controller="myCtrl" ng-init="checkuser()">
+    
+    <div class="header" ng-class="navClass" ng-init="show_data()">
+        <img draggable="false" class="logo" src="images/logo.png">
+        <ul class="nav">
+            <li>
+                <a href="index.html">Home</a>
+            </li>
+            <li>
+                <div class="dropdown">
+                    <a href="" class="dropbtn" id="active" ng-show="h2">Student</a>
+                    <div class="dropdown-content" style="min-width:260px;">
+                        <a href="managestud.html" ng-show="h1">Manage Student</a>
+                        <a href="addstud.html"ng-show="h1">Add Student</a>
+                        <a href="viewstud.html" id="active" ng-show="h2">View/Edit/Delete Student</a>
+                        <a href="studsubject.html" ng-show="h1">Manage Student Subject</a>
+                    </div>
+                </div>
+            </li>
+            <li>
+                <div class="dropdown">
+                    <a href="" class="dropbtn">Attendance</a>
+                    <div class="dropdown-content" style="min-width:280px;">
+                        <a href="importaddattend.html" ng-show="h3">Import/Add Attendance</a>
+                        <a href="viewattend.html">View/Edit/Delete Attendance</a>
+                        <a href="attendreport.html" ng-show="h2">Attendance Report</a>
+                    </div>
+                </div>
+            </li>
+            <li>
+                <div class="dropdown">
+                    <a href="" class="dropbtn">Examination</a>
+                    <div class="dropdown-content" style="min-width:240px;">
+                        <a href="manageexam.html" ng-show="h1">Manage Examination</a>
+                        <a href="viewmark.html">View/Edit/Delete Marks</a>
+                        <a href="importaddmark.html" ng-show="h3">Import/Add Marks</a>
+                        <a href="marksreport.html" ng-show="h2">Marks Report</a>
+                    </div>
+                </div>
+            </li>
+            <li>
+                <div class="dropdown">
+                    <a href="" class="dropbtn" ng-show="h1">Settings</a>
+                    <div class="dropdown-content" style="min-width:190px;">
+                        <a href="managecourse.html">Manage Course</a>
+                        <a href="managesubject.html">Manage Subject</a>
+                        <a href="managesection.html">Manage Section</a>
+                        <a href="manageusers.html">Manage Users</a>
+                    </div>
+                </div>
+            </li>
+            <li>
+                <a href="sms.html" ng-show="h2">SMS</a>
+            </li>
+            <li>
+                <a href="" ng-click="showConfirm()"><i class="fa fa-sign-out"></i>Logout</a>
+            </li>
+        </ul>
+    </div>
+    
+    <div class="bannerText">
+        <a class="update" ng-show="h1" href="editall.html" style="font-size: 18px;float:right">Edit All</a>
+        <div class="InputAddOn" style="margin-top:3.0em">
+            <span class="InputAddOn-item">Roll No</span>
+            <input type="text" ng-model="f.rollno" class="InputAddOn-field" placeholder="Search by Roll Number">
+            <span class="InputAddOn-item">Year</span>
+            <select ng-model="f.year" ng-init="drop2()" class="InputAddOn-field">
+                <option value="" disabled selected hidden>Search by Year</option>
+                <option value="">All</option>
+                <option ng-repeat="x in drop2">{{x.year}}</option>
+            </select> 
+            <span class="InputAddOn-item">Semester</span>
+            <select ng-model="sem" ng-init="drop3()" class="InputAddOn-field" ng-change="onChange()">
+                <option value="" disabled selected hidden>Search by Semester</option>
+                <option value="All">All</option>
+                <option ng-repeat="x in drop3">{{x.sem}}</option>
+            </select> 
+            <span class="InputAddOn-item">Course</span>
+            <select ng-model="f.course" ng-init="drop4()" class="InputAddOn-field">
+                <option value="" disabled selected hidden>Search by Course</option>
+                <option value="">All</option>
+                <option ng-repeat="x in drop4">{{x.course}}</option>
+            </select>
+        </div>
+        <div class="InputAddOn1">
+            <span class="InputAddOn-item">Section</span>
+            <select ng-model="f.section" ng-init="drop5()" class="InputAddOn-field">
+                <option value="" disabled selected hidden>Search by Section</option>
+                <option value="">All</option>
+                <option ng-repeat="x in drop5">{{x.section}}</option>
+            </select>
+        </div>
+        <div id="id" class="modal">
+            <div class="modal-content animate-top">
+                <header> 
+                    Update Student
+                </header>  
+                <div class="container">                    
+                    <form name="myform" novalidate autocomplete="off">
+                        <label class="label1">Roll No</label>
+                        <input type="number" name="rollno" ng-value="rollno" ng-model="rollno" class="form-control" required readonly>
+                        <label class="label1">Full Name</label>
+                        <input type="text" name="name" ng-model="name" class="form-control" required>
+                        <span ng-show="myform.$submitted || myform.name.$dirty">
+                            <span class="error" ng-show="myform.name.$error.required">Student Name Required</span>
+                        </span>
+                        <label class="label1">Gender</label>
+                        <input type="radio" name="gender" class="radio1" ng-model="gender" ng-value='"Male"'>Male
+                        <input type="radio" name="gender" class="radio1" ng-model="gender" ng-value='"Female"'>Female
+                        <label class="label1">Date Of Birth</label>
+                        <input type="date" id="dob1" name="dob" ng-value="dob" ng-model="dob" ng-model-options="{timezone:'utc'}" class="form-control">
+                        <label class="label1">Address</label>
+                        <input type="text" name="address" ng-model="address" class="form-control" required>
+                        <span ng-show="myform.$submitted || myform.address.$dirty">
+                            <span class="error" ng-show="myform.address.$error.required">Address Required</span>
+                        </span>
+                        <label class="label1">Phone Number</label>
+                        <input type="number" name="phoneno" ng-value="phoneno" ng-model="phoneno" class="form-control" ng-minlength="10" ng-maxlength="10" onkeydown="return event.keyCode !== 69" required>
+
+                        <span ng-show="myform.$submitted || myform.phoneno.$dirty">
+                            <span class="error" ng-show="myform.phoneno.$error.required">Phone Number Required</span>
+                            <span class="error" ng-show="((myform.phoneno.$error.minlength || myform.phoneno.$error.maxlength) && myform.phoneno.$dirty) ">Phone Number should be 10 digits</span>
+                        </span>
+                        <label class="label1">Year</label>
+                        <select ng-model="year" ng-init="drop2()" class="form-control select1" required>
+                            <option ng-repeat="x in drop2">{{x.year}}</option>
+                        </select>
+
+                        <label class="label1">Semester</label>
+                        <select ng-model="sem" ng-init="drop3()" class="form-control select1" required>
+                            <option ng-repeat="x in drop3">{{x.sem}}</option>
+                        </select>
+
+                        <label class="label1">Course</label>
+                        <select ng-model="course" ng-init="drop4()" class="form-control select1" required>
+                            <option ng-repeat="x in drop4">{{x.course}}</option>
+                        </select>
+
+                        <label class="label1">Section</label>
+                        <select ng-model="section" ng-init="drop5()" class="form-control select1" required>
+                            <option ng-repeat="x in drop5">{{x.section}}</option>
+                        </select>
+                         </form>   
+                </div>
+                <footer>
+                    <button class="update" type="submit" name="update" ng-click="insert()" >Update</button>
+                    <button onclick="document.getElementById('id').style.display='none'" ng-click="reload()" class="delete" style="margin-left: 50px"><i class="fa fa-close"></i> Close</button>
+                </footer> 
+            </div>
+        </div>
+        <table>
+            <tr>
+                <th ng-click="orderByMe('rollno')">Roll No</th>
+                <th ng-click="orderByMe('name')">Name</th>
+                <th ng-click="orderByMe('gender')">Gender</th>
+                <th ng-click="orderByMe('dob')">Date of Birth</th>
+                <th>Address</th>
+                <th>Phone Number</th>
+                <th>Year</th>
+                <th>Semester</th>
+                <th>Course</th>
+                <th>Section</th>
+                <th>Language</th>
+                <th ng-show="h1">Edit</th>
+                <th ng-show="h1">Delete</th>
+            </tr>
+            <tr ng-show="student.length!=0" ng-repeat="x in student | orderBy:myOrderBy | filter:f">
+                <td>{{x.rollno}}</td>
+                <td>{{x.name}}</td>
+                <td>{{x.gender}}</td>
+                <td>{{x.dob}}</td>
+                <td>{{x.address}}</td>
+                <td>{{x.phoneno}}</td>
+                <td>{{x.year}}</td>
+                <td>{{x.sem}}</td>
+                <td>{{x.course}}</td>
+                <td>{{x.section}}</td>
+                <td>{{x.lang}}</td>
+                <td  ng-show="h1">
+                    <button class="edit" onclick="document.getElementById('id').style.display='block',body.style.overflow = 'hidden';" ng-click="update_data(x.rollno, x.name, x.gender, x.dob, x.address, x.phoneno, x.year, x.sem, x.course, x.section)">
+                    <i class="fa fa-edit"></i> Edit
+                    </button>
+                </td>
+                <td ng-show="h1">
+                    <button class="delete" ng-click="delete_data(x.rollno)">
+                    <i class="fa fa-trash"></i> Delete
+                    </button>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="13" ng-show="student.length==0 || (!(student| filter:f).length)">No Records Found</td>
+            </tr>
+        </table>
+    </div>
+</body>
+<script>
+var app = angular.module('myApp', []);
+app.controller('myCtrl', function($scope, $window, $http) {
+    var dt = new Date();
+    dt.setFullYear( dt.getFullYear() - 16 );
+    dob1.max=dt.toISOString().split('T')[0];
+    
+    $scope.showConfirm = function () {
+        if ($window.confirm("Are you sure want to Logout?")) {
+            $scope.Message = "You clicked YES.";
+            location.href = 'php/logout.php';
+        } else {
+            $scope.Message = "You clicked NO.";
+        }
+    }
+    $scope.navClass = '.header';
+    angular.element($window).bind("scroll", function() {
+        if(window.pageYOffset > 0) {
+            $scope.navClass = 'active';
+        } else {
+            $scope.navClass = '.header';
+        }
+        $scope.$apply();
+    });
+    $scope.checkuser=function(){
+        $scope.h1=false;
+        $scope.h2=false;
+        $scope.h3=false;
+        $http.get('php/checkuser.php')
+        .success(function(data){
+            if(data=="user"){
+                location='login.html';
+            }else if(data=="admin"){
+                $scope.h1=true;
+                $scope.h2=true;
+                $scope.h3=true;
+            }else if(data=="Academic Advisor"){
+                $scope.h2=true;
+            }else if(data=="Subject Lecturer"){
+                $scope.h3=true;
+            }
+        });
+    }
+
+    $scope.reload = function() {
+        $window.location.reload();
+    }
+    $scope.orderByMe = function(x) {
+        $scope.myOrderBy = x;
+    }
+    $scope.drop2=function(){
+        $http.get('php/dropdown2.php')
+        .success(function(data) {
+            $scope.drop2=data;
+        });
+    }
+    $scope.drop3=function(){
+        $http.get('php/dropdown3.php')
+        .success(function(data) {
+            $scope.drop3=data;
+        });
+    }
+    $scope.drop4=function(){
+        $http.get('php/dropdown4.php')
+        .success(function(data) {
+            $scope.drop4=data;
+        });
+    }
+    $scope.drop5=function(){
+        $http.get('php/dropdown5.php')
+        .success(function(data) {
+            $scope.drop5=data;
+        });
+    }
+    $scope.onChange = function () {
+        $http.post("php/semstud.php",{
+            'sem':$scope.sem
+        })
+        .success(function(data){
+            if($scope.sem==null || $scope.sem=='All'){
+               $scope.show_data(); 
+            }else{
+                $scope.student = data;
+            }
+        });
+    };
+    $scope.show_data = function(){
+        $http({
+            method:"POST",
+            url:"php/studdisplay.php"
+        })
+        .success(function(data){
+            $scope.student = data;
+            if(data=="none"){
+            $scope.student='';
+        }
+        });
+    };
+    $scope.btnName = "Update";
+        $scope.insert = function() {
+        if ($scope.rollno != null && $scope.name != null && $scope.gender != null && $scope.address != null && $scope.phoneno != null ) {
+            $http.post(
+                "php/studinsert.php", {
+                    'rollno': $scope.rollno,
+                    'name': $scope.name,
+                    'gender': $scope.gender,
+                    'dob': $scope.dob,
+                    'address': $scope.address,
+                    'phoneno': $scope.phoneno,
+                    'year': $scope.year,
+                    'sem': $scope.sem,
+                    'course': $scope.course,
+                    'section': $scope.section,
+                    'btnName': $scope.btnName
+                }
+            ).success(function(data) {
+                alert(data);
+                $scope.show_data();
+                $window.location.reload();
+            });
+        }
+    }
+    $scope.update_data = function(rollno,name,gender,dob,address,phoneno,year,sem,course,section) {
+        $scope.rollno = rollno;
+        $scope.name = name;
+        $scope.dob = dob;
+        $scope.gender = gender;
+        $scope.address = address;
+        $scope.phoneno = phoneno;
+        $scope.year = year;
+        $scope.sem = sem;
+        $scope.course = course;
+        $scope.section = section;
+        $scope.btnName = "Update";
+    }
+    $scope.delete_data = function(rollno) {
+        if (confirm("Are you sure you want to delete?")) {
+            $http.post("php/studdelete.php", {
+                'rollno': rollno
+            })
+            .success(function(data) {
+                alert(data);
+                $scope.show_data();
+            });
+        } else {
+            return false;
+        }
+    }
+});
+</script>
+</html>

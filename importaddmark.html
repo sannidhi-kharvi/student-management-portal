@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">	
+    <meta charset="utf-8">
+    <title>Student Attendance, Marks Management and SMS Portal</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.9/angular.min.js"></script> 
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="styles/main.css">
+</head>
+<body ng-app="myApp" ng-controller="myCtrl" ng-init="checkuser()">
+    
+    <div class="header" ng-class="navClass">
+        <img draggable="false" class="logo" src="images/logo.png">
+        <ul class="nav">
+            <li>
+                <a href="index.html">Home</a>
+            </li>
+            <li>
+                <div class="dropdown">
+                    <a href="" class="dropbtn" ng-show="h2">Student</a>
+                    <div class="dropdown-content" style="min-width:260px;">
+                        <a href="managestud.html" ng-show="h1">Manage Student</a>
+                        <a href="addstud.html"ng-show="h1">Add Student</a>
+                        <a href="viewstud.html" ng-show="h2">View/Edit/Delete Student</a>
+                        <a href="studsubject.html" ng-show="h1">Manage Student Subject</a>
+                    </div>
+                </div>
+            </li>
+            <li>
+                <div class="dropdown">
+                    <a href="" class="dropbtn">Attendance</a>
+                    <div class="dropdown-content" style="min-width:280px;">
+                        <a href="importaddattend.html" ng-show="h3">Import/Add Attendance</a>
+                        <a href="viewattend.html">View/Edit/Delete Attendance</a>
+                        <a href="attendreport.html" ng-show="h2">Attendance Report</a>
+                    </div>
+                </div>
+            </li>
+            <li>
+                <div class="dropdown">
+                    <a href="" class="dropbtn" id="active">Examination</a>
+                    <div class="dropdown-content" style="min-width:240px;">
+                        <a href="manageexam.html" ng-show="h1">Manage Examination</a>
+                        <a href="viewmark.html">View/Edit/Delete Marks</a>
+                        <a href="importaddmark.html" id="active" ng-show="h3">Import/Add Marks</a>
+                        <a href="marksreport.html" ng-show="h2">Marks Report</a>
+                    </div>
+                </div>
+            </li>
+            <li>
+                <div class="dropdown">
+                    <a href="" class="dropbtn" ng-show="h1">Settings</a>
+                    <div class="dropdown-content" style="min-width:190px;">
+                        <a href="managecourse.html">Manage Course</a>
+                        <a href="managesubject.html">Manage Subject</a>
+                        <a href="managesection.html">Manage Section</a>
+                        <a href="manageusers.html">Manage Users</a>
+                    </div>
+                </div>
+            </li>
+            <li>
+                <a href="sms.html" ng-show="h2">SMS</a>
+            </li>
+            <li>
+                <a href="" ng-click="showConfirm()"><i class="fa fa-sign-out"></i>Logout</a>
+            </li>
+        </ul>
+    </div>
+
+    <div class="bannerText icenter">
+        <a class="update" href="importmark.html" style="font-size:20px;"> Import Marks</a>
+        <a class="update" href="addmark.html" style="font-size:20px;margin-left: 100px;"> Add Marks</a>
+    </div>
+</body>
+<script>
+var app = angular.module('myApp', [])
+app.controller('myCtrl', function ($scope, $http, $window) {
+    $scope.showConfirm = function () {
+        if ($window.confirm("Are you sure want to Logout?")) {
+            $scope.Message = "You clicked YES.";
+            location.href = 'php/logout.php';
+        } 
+        else {
+            $scope.Message = "You clicked NO.";
+        }
+    }
+    $scope.navClass = '.header';
+    angular.element($window).bind("scroll", function() {
+        if(window.pageYOffset > 0) {
+            $scope.navClass = 'active';
+        } 
+        else {
+            $scope.navClass = '.header';
+        }
+        $scope.$apply();
+    });
+    $scope.checkuser=function(){
+        $scope.h1=false;
+        $scope.h2=false;
+        $scope.h3=false;
+        $http.get('php/checkuser.php')
+        .success(function(data){
+            if(data=="user"){
+                location='login.html';
+            }else if(data=="admin"){
+                $scope.h1=true;
+                $scope.h2=true;
+                $scope.h3=true;
+            }else if(data=="Academic Advisor"){
+                $scope.h2=true;
+            }else if(data=="Subject Lecturer"){
+                $scope.h3=true;
+            }
+        });
+    }
+});
+</script>
+</html>

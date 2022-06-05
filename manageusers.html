@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">	
+    <meta charset="utf-8">
+    <title>Student Attendance, Marks Management and SMS Portal</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.9/angular.min.js"></script> 
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="styles/main.css">
+</head>
+<body ng-app="myApp" ng-controller="myCtrl" ng-init="checkuser()">
+    <div class="header" ng-class="navClass" ng-init="show_data()">
+        <img draggable="false" class="logo" src="images/logo.png">
+        <ul class="nav">
+            <li>
+                <a href="index.html">Home</a>
+            </li>
+            <li>
+                <div class="dropdown">
+                    <a href="" class="dropbtn" ng-show="h2">Student</a>
+                    <div class="dropdown-content" style="min-width:260px;">
+                        <a href="managestud.html" ng-show="h1">Manage Student</a>
+                        <a href="addstud.html"ng-show="h1">Add Student</a>
+                        <a href="viewstud.html" ng-show="h2">View/Edit/Delete Student</a>
+                        <a href="studsubject.html" ng-show="h1">Manage Student Subject</a>
+                    </div>
+                </div>
+            </li>
+            <li>
+                <div class="dropdown">
+                    <a href="" class="dropbtn">Attendance</a>
+                    <div class="dropdown-content" style="min-width:280px;">
+                        <a href="importaddattend.html" ng-show="h3">Import/Add Attendance</a>
+                        <a href="viewattend.html">View/Edit/Delete Attendance</a>
+                        <a href="attendreport.html" ng-show="h2">Attendance Report</a>
+                    </div>
+                </div>
+            </li>
+            <li>
+                <div class="dropdown">
+                    <a href="" class="dropbtn">Examination</a>
+                    <div class="dropdown-content" style="min-width:240px;">
+                        <a href="manageexam.html" ng-show="h1">Manage Examination</a>
+                        <a href="viewmark.html">View/Edit/Delete Marks</a>
+                        <a href="importaddmark.html" ng-show="h3">Import/Add Marks</a>
+                        <a href="marksreport.html" ng-show="h2">Marks Report</a>
+                    </div>
+                </div>
+            </li>
+            <li>
+                <div class="dropdown">
+                    <a href="" class="dropbtn" id="active" ng-show="h1">Settings</a>
+                    <div class="dropdown-content" style="min-width:190px;">
+                        <a href="managecourse.html">Manage Course</a>
+                        <a href="managesubject.html">Manage Subject</a>
+                        <a href="managesection.html">Manage Section</a>
+                        <a href="manageusers.html" id="active">Manage Users</a>
+                    </div>
+                </div>
+            </li>
+            <li>
+                <a href="sms.html" ng-show="h2">SMS</a>
+            </li>
+            <li>
+                <a href="" ng-click="showConfirm()"><i class="fa fa-sign-out"></i>Logout</a>
+            </li>
+        </ul>
+    </div>
+    
+    <div class="bannerText">
+        <button class="edit" ng-click="add()" onclick="document.getElementById('id').style.display='block',body.style.overflow = 'hidden';"> Add Record</button>
+        <div id="id" class="modal">
+            <div class="modal-content animate-top">
+                <header> 
+                    Manage User
+                </header> 
+                <div class="container">   
+                    <form name="myform" novalidate autocomplete="off">
+                        <label class="label1">Lecturer ID</label>
+                        <input type="text" name="lid" ng-model="lid"  class="form-control" placeholder="Enter Lecturer ID" required>
+                        <div>
+                            <span ng-show="myform.$submitted || myform.lid.$dirty">
+                                <span class="error" ng-show="myform.lid.$error.required">Lecturer ID Required</span>
+                            </span><br/>
+                        </div>
+                        <label class="label1">Lecturer Name</label>
+                        <input type="text" name="lname" ng-model="lname" class="form-control" placeholder="Enter Name" required>
+                        <div>
+                            <span ng-show="myform.$submitted || myform.lname.$dirty">
+                                <span class="error" ng-show="myform.lname.$error.required">Name Required</span>
+                            </span><br/>
+                        </div>
+                        <label class="label1">Password</label>
+                        <input type="text" name="pass" ng-model="pass" class="form-control" placeholder="Enter Password" required>
+                        <div>
+                            <span ng-show="myform.$submitted || myform.pass.$dirty">
+                                <span class="error" ng-show="myform.pass.$error.required">Password Required</span>
+                            </span><br/>
+                        </div>
+                        <label class="label1">Lecturer Type</label>
+                        <input type="radio" class="radio1" name="type" ng-model="type" ng-value='"Academic Advisor"' required>Academic Advisor
+                        <input type="radio" class="radio1" name="type" ng-model="type" ng-value='"Subject Lecturer"' required>Subject Lecturer
+                        <div>
+                            <span ng-show="myform.$submitted || myform.type.$dirty">
+                            <span class="error" ng-show="myform.type.$error.required">Lecturer Type Required</span>
+                            </span><br/>
+                        </div>
+                         <label class="label1" ng-show="type==='Academic Advisor'">Course</label>
+                        <select ng-model="course" ng-init="drop1()" name="course" ng-show="type==='Academic Advisor'" class="form-control select1" required>
+                            <option value="" disabled selected hidden>Select Course</option>
+                            <option ng-repeat="x in drop1">{{ x.course }}</option>
+                        </select>
+                        <div ng-show="type==='Academic Advisor'">
+                            <span ng-show="myform.$submitted || myform.course.$dirty">
+                             <span class="error" ng-show="myform.course.$error.required">Course Required</span>
+                            </span><br/>
+                        </div>
+                        <label class="label1" ng-show="type==='Academic Advisor'">Section</label>
+                        <select ng-model="section" ng-init="drop5()" name="section" ng-show="type==='Academic Advisor'" class="form-control select1" required>
+                            <option value="" disabled selected hidden>Select Section</option>
+                            <option ng-repeat="x in drop5">{{x.section}}</option>
+                        </select>
+                        <div ng-show="type==='Academic Advisor'">
+                            <span ng-show="myform.$submitted || myform.section.$dirty">
+                                <span class="error" ng-show="myform.section.$error.required">Section Required</span>
+                            </span><br/>
+                        </div>
+                       <label ng-show="type==='Subject Lecturer'" class="label1">Subject</label>
+                        <div ng-show="type==='Subject Lecturer'" class="multiselect">
+                            <div class="selectBox" ng-click="showCheckboxes()">
+                                <select class="form-control1">
+                                    <option value="" disabled selected hidden>Select Subject</option>
+                                </select>
+                            </div>
+                            <div id="checkboxes">
+                                <input type="text" ng-model="f.sname" style="width:478px;" class="form-control1" placeholder="Search by Subject">
+                                <div ng-repeat="x in drop6 | filter:f">
+                                    <label class="label1"><input type="checkbox" ng-model="x.selected" ng-checked="isChecked(x.scode)">{{x.scode+'-'+x.sname}}</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div>
+                            <span ng-show="myform.$submitted || myform.sname.$dirty">
+                            <span class="error" ng-show="myform.sname.$error.required">Subject Required</span>
+                            </span><br/>
+                        </div>
+                        <footer>
+                            <button class="update" type="submit" name="insert" ng-click="insert()">{{btnName}}</button>
+                            <button onclick="document.getElementById('id').style.display='none',body.style.overflow = 'hidden';" ng-click="reload()" class="delete" style="margin-left: 50px"><i class="fa fa-close"></i> Close</button>
+                        </footer>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <table>
+            <tr>
+                <th ng-click="orderByMe('lid')">Lecturer id</th>
+                <th ng-click="orderByMe('lname')">Lecturer Name</th>
+                <th ng-click="orderByMe('type')">Type</th>
+                <th>Course</th>
+                <th>Section</th>
+                <th>Subject</th>
+                <th>Edit</th>
+                <th>Delete</th>
+            </tr>
+            <tr ng-repeat="x in student | orderBy:myOrderBy">
+                <td>{{x.lid}}</td>
+                <td>{{x.lname}}</td>
+                <td>{{x.type}}</td>
+                <td ng-show="x.type==='Academic Advisor'">{{x.course}}</td>
+                <td ng-show="x.type==='Subject Lecturer'"></td>
+                <td ng-show="x.type==='Subject Lecturer'"></td>
+                <td ng-show="x.type==='Academic Advisor'">{{x.section}}</td>
+                <td>{{x.scode}}</td>
+                <td>
+                    <button class="edit" onclick="document.getElementById('id').style.display='block',body.style.overflow = 'hidden';" ng-click="update_data(x.lid,x.lname,x.pass,x.type,x.course,x.section,x.scode)">
+                    <i class="fa fa-edit"></i> Edit
+                    </button>
+                </td>
+                <td>
+                    <button class="delete" ng-click="delete_data(x.lid)">
+                    <i class="fa fa-trash"></i> Delete
+                    </button>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="8" ng-show="student.length==0">No Records Found</td>
+            </tr>
+        </table> 
+    </div>
+</body>
+<script>
+var app = angular.module('myApp', []);
+app.controller('myCtrl', function($scope, $http,$window){
+    $scope.showConfirm = function () {
+        if ($window.confirm("Are you sure want to Logout?")) {
+            $scope.Message = "You clicked YES.";
+            location.href = 'php/logout.php';
+        } 
+        else {
+            $scope.Message = "You clicked NO.";
+        }
+    }
+    $scope.navClass = '.header';
+    angular.element($window).bind("scroll", function() {
+        if(window.pageYOffset > 0) {
+            $scope.navClass = 'active';
+        } 
+        else {
+            $scope.navClass = '.header';
+        }
+        $scope.$apply();
+    });
+    $scope.checkuser=function(){
+        $scope.h1=false;
+        $scope.h2=false;
+        $scope.h3=false;
+        $http.get('php/checkuser.php')
+        .success(function(data){
+            if(data=="user"){
+                location='login.html';
+            }else if(data=="admin"){
+                $scope.h1=true;
+                $scope.h2=true;
+                $scope.h3=true;
+            }else if(data=="Academic Advisor"){
+                $scope.h2=true;
+            }else if(data=="Subject Lecturer"){
+                $scope.h3=true;
+            }
+        });
+    }
+    $scope.reload = function() {
+        $window.location.reload();
+    }
+    $scope.orderByMe = function(x) {
+        $scope.myOrderBy = x;
+    }
+    $scope.drop1=function(){
+        $http.get('php/dropdown1.php')
+        .success(function(data) {
+            $scope.drop1=data;
+        });
+    }
+    $scope.drop2=function(){
+        $http.get('php/dropdown2.php')
+        .success(function(data) {
+            $scope.drop2=data;
+        });
+    }
+    $scope.drop3=function(){
+        $http.get('php/dropdown3.php')
+        .success(function(data) {
+            $scope.drop3=data;
+        });
+    }
+    $scope.drop4=function(){
+        $http.get('php/dropdown4.php')
+        .success(function(data) {
+            $scope.drop4=data;
+        });
+    }
+    $scope.drop5=function(){
+        $http.get('php/dropdown5.php')
+        .success(function(data) {
+            $scope.drop5=data;
+        });
+    }
+    $http.get('php/dropdown6.php')
+    .success(function(data) {
+        $scope.drop6 = data;
+    });
+    $scope.show_data = function() {
+        $http.get("php/userdisplay.php")
+            .success(function(data) {
+                $scope.student = data;
+            });
+    }
+    $scope.add = function() {
+        $scope.lid = null;
+        $scope.lname = null;
+        $scope.pass = null;
+        $scope.type = null;
+        $scope.course = null;
+        $scope.section = null;
+        $scope.scode = null;
+        $scope.btnName = "Insert";
+    }
+    
+    var expanded = false;
+    $scope.showCheckboxes = function () {
+        var checkboxes = document.getElementById("checkboxes");
+        if (!expanded) {
+            checkboxes.style.display = "block";
+            expanded = true;
+        } else {
+            checkboxes.style.display = "none";
+            expanded = false;
+        }
+    }
+    var items;
+    $scope.update_data = function(lid,lname,pass,type,course,section) {
+        $scope.lid = lid;
+        $scope.lname = lname;
+        $scope.pass = pass;
+        $scope.type = type;
+        $scope.course = course;
+        $scope.section = section;
+        $scope.btnName = "Update";
+    }
+    
+    $scope.insert = function() {
+        if ($scope.lid != null && $scope.lname != null && $scope.pass != null && $scope.type != null) {
+            if($scope.type == "Academic Advisor"){
+                if ($scope.course != null && $scope.section != null) {
+                    $http.post(
+                        "php/userinsert.php", {
+                            'lid': $scope.lid,
+                            'lname': $scope.lname,
+                            'pass': $scope.pass,
+                            'type': $scope.type,
+                            'course': $scope.course,
+                            'section': $scope.section,
+                            'btnName': $scope.btnName
+                        }
+                    ).success(function(data) {
+                        alert(data);          
+                        $scope.show_data();
+                        $window.location.reload();
+                    });
+                }
+            }else if($scope.type == "Subject Lecturer"){
+                var message = "";
+                for (var i = 0; i < $scope.drop6.length; i++) {
+                    if ($scope.drop6[i].selected) {
+                        var subjectname = $scope.drop6[i].scode;
+                        if(items==undefined){
+                            message +=  subjectname + ","; 
+                        }
+                        else{
+                            message += items + subjectname + ","; 
+                        }
+                    }
+                }
+                $http.post(
+                    "php/userinsert.php", {
+                        'lid': $scope.lid,
+                        'lname': $scope.lname,
+                        'pass': $scope.pass,
+                        'type': $scope.type,
+                        'scode': message,
+                        'btnName': $scope.btnName
+                    }
+                ).success(function(data) {
+                    alert(data);          
+                    $scope.show_data();
+                    $window.location.reload();
+                });
+            }
+        }
+    }
+    $http.post("php/userdisplay.php", {
+        'type': $scope.type
+    });
+    
+    $scope.delete_data = function(lid) {
+        if (confirm("Are you sure you want to delete?")) {
+            $http.post("php/userdelete.php", {
+                'lid': lid
+            })
+            .success(function(data) {
+                alert(data);
+                $scope.show_data();
+            });
+        } else {
+            return false;
+        }
+    }
+});
+</script>
+</html>

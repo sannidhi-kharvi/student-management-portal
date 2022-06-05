@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">	
+    <meta charset="utf-8">
+    <title>Student Attendance, Marks Management and SMS Portal</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.9/angular.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.4/jspdf.min.js"></script>
+    <script src="https://cdn.rawgit.com/simonbengtsson/jsPDF/requirejs-fix-dist/dist/jspdf.debug.js"></script> 
+    <script src="https://unpkg.com/jspdf-autotable@2.3.2"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"> 
+    <link rel="stylesheet" href="styles/main.css">
+</head>
+<body ng-app="myApp" ng-controller="myCtrl" ng-init="checkuser()">
+    
+    <div class="header" ng-class="navClass" ng-init="show_data()">
+        <img draggable="false" class="logo" src="images/logo.png">
+        <ul class="nav">
+            <li>
+                <a href="index.html">Home</a>
+            </li>
+            <li>
+                <div class="dropdown">
+                    <a href="" class="dropbtn" id="active" ng-show="h2">Student</a>
+                    <div class="dropdown-content" style="min-width:260px;">
+                        <a href="managestud.html" ng-show="h1">Manage Student</a>
+                        <a href="addstud.html"ng-show="h1">Add Student</a>
+                        <a href="viewstud.html" id="active" ng-show="h2">View/Edit/Delete Student</a>
+                        <a href="studsubject.html" ng-show="h1">Manage Student Subject</a>
+                    </div>
+                </div>
+            </li>
+            <li>
+                <div class="dropdown">
+                    <a href="" class="dropbtn">Attendance</a>
+                    <div class="dropdown-content" style="min-width:280px;">
+                        <a href="importaddattend.html" ng-show="h3">Import/Add Attendance</a>
+                        <a href="viewattend.html">View/Edit/Delete Attendance</a>
+                        <a href="attendreport.html" ng-show="h2">Attendance Report</a>
+                    </div>
+                </div>
+            </li>
+            <li>
+                <div class="dropdown">
+                    <a href="" class="dropbtn">Examination</a>
+                    <div class="dropdown-content" style="min-width:240px;">
+                        <a href="manageexam.html" ng-show="h1">Manage Examination</a>
+                        <a href="viewmark.html">View/Edit/Delete Marks</a>
+                        <a href="importaddmark.html" ng-show="h3">Import/Add Marks</a>
+                        <a href="marksreport.html" ng-show="h2">Marks Report</a>
+                    </div>
+                </div>
+            </li>
+            <li>
+                <div class="dropdown">
+                    <a href="" class="dropbtn" ng-show="h1">Settings</a>
+                    <div class="dropdown-content" style="min-width:190px;">
+                        <a href="managecourse.html">Manage Course</a>
+                        <a href="managesubject.html">Manage Subject</a>
+                        <a href="managesection.html">Manage Section</a>
+                        <a href="manageusers.html">Manage Users</a>
+                    </div>
+                </div>
+            </li>
+            <li>
+                <a href="sms.html" ng-show="h2">SMS</a>
+            </li>
+            <li>
+                <a href="" ng-click="showConfirm()"><i class="fa fa-sign-out"></i>Logout</a>
+            </li>
+        </ul>
+    </div>
+    
+    <div class="bannerText icenter">
+        <a class="update" href="viewstud.html" style="float:left;">
+            <i class="fa fa-backward"></i> Back
+        </a>
+        <table id="basic-table">
+            <tr>
+                <th ng-click="orderByMe('rollno')">Roll No</th>
+                <th ng-click="orderByMe('name')">Name</th>
+                <th ng-click="orderByMe('gender')">Gender</th>
+                <th ng-click="orderByMe('dob')">Date of Birth</th>
+                <th>Address</th>
+                <th>Phone Number</th>
+                <th>Course</th>
+                <th>Section</th>
+            </tr>
+            <tr ng-repeat="x in student | orderBy:myOrderBy | filter:f">
+                <td>{{x.rollno}}</td>
+                <td>{{x.name}}</td>
+                <td>{{x.gender}}</td>
+                <td>{{x.dob}}</td>
+                <td>{{x.address}}</td>
+                <td>{{x.phoneno}}</td>
+                <td>{{x.course}}</td>
+                <td>{{x.section}}</td>
+            </tr>
+        </table>
+        <button class="update" ng-hide="pdfdisable" ng-click="generate()">Generate PDF</button>
+        <button class="update" type="submit" name="edita" ng-hide="editdisable" ng-click="edita()" style="margin-left: 50px;">Edit All</button>
+    </div>
+</body>
+<script>
+var app = angular.module('myApp', []);
+app.controller('myCtrl', function($scope,$http,$window) {
+    $scope.showConfirm = function () {
+        if ($window.confirm("Are you sure want to Logout?")) {
+            $scope.Message = "You clicked YES.";
+            location.href = 'php/logout.php';
+        } 
+        else {
+            $scope.Message = "You clicked NO.";
+        }
+    }
+    $scope.navClass = '.header';
+    angular.element($window).bind("scroll", function() {
+        if(window.pageYOffset > 0) {
+            $scope.navClass = 'active';
+        } 
+        else {
+            $scope.navClass = '.header';
+        }
+        $scope.$apply();
+    });
+    $scope.checkuser=function(){
+        $scope.h1=false;
+        $scope.h2=false;
+        $scope.h3=false;
+        $http.get('php/checkuser.php')
+        .success(function(data){
+            if(data=="user"){
+                location='login.html';
+            }else if(data=="admin"){
+                $scope.h1=true;
+                $scope.h2=true;
+                $scope.h3=true;
+            }else if(data=="Academic Advisor"){
+                $scope.h2=true;
+            }else if(data=="Subject Lecturer"){
+                $scope.h3=true;
+            }
+        });
+    }
+    
+    $scope.edita = function() {
+        if ($window.confirm("Are you sure want to change the Semester of the Student?")) {
+            $http.post("php/editall.php", {}
+            ).success(function(data) {
+                alert(data);
+                $scope.show_data();
+                $window.location.reload();
+            });
+            $scope.Message = "You clicked YES.";
+        } else {
+            $scope.Message = "You clicked NO.";
+        }
+    }
+    $scope.editdisable = true;
+    $scope.pdfdisable = true;
+    $scope.show_data = function(){
+        $http({
+            method:"POST",
+            url:"php/finalyear.php"
+        })
+        .success(function(data){
+            $scope.student = data; 
+            $scope.pdfdisable = false;
+            if(data=="none"){
+                $scope.student='';
+                $scope.editdisable = false;
+                $scope.pdfdisable = true;
+                var styles = '.update{margin-right: 50px;}';
+                var styleSheet = document.createElement("style");
+                styleSheet.type = "text/css";
+                styleSheet.innerText = styles;
+                document.head.appendChild(styleSheet);
+            }
+        });
+    };
+    var dt = new Date(); 
+    var pdt=dt.getFullYear() - 1;
+    var cdt= dt.getFullYear();
+    $scope.generate = function() {
+        $scope.editdisable = false; 
+        var doc = new jsPDF('p', 'pt');
+
+        var res = doc.autoTableHtmlToJson(document.getElementById("basic-table"));
+        doc.autoTable(res.columns, res.data, {margin: {top: 80}});
+
+        var header = function(data) {
+        doc.setFontSize(16);
+        doc.setTextColor(40);
+        doc.setFontStyle('normal');
+        doc.text("Final Year Students List  "+ pdt + "-"+ cdt, data.settings.margin.left, 50);
+        };
+
+        var options = {
+        beforePageContent: header,
+        margin: {
+          top: 80
+        }
+        };
+
+        doc.autoTable(res.columns, res.data, options);
+
+        doc.save("FinalYear.pdf");
+    }
+});
+</script>
+</html>

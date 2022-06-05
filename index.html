@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">	
+    <meta charset="utf-8">
+    <title>Student Attendance, Marks Management and SMS Portal</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.9/angular.min.js"></script> 
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="styles/main.css">
+<style>
+html{ 
+    background: url('images/wallpaper.jpg') no-repeat center center fixed; 
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+}
+body{
+    overflow:hidden;
+}
+.header .logo{
+    padding-top: 40px;
+    width:100px;
+    animation-delay: 3s;
+}
+.header .nav li:nth-child(1),
+.sci li:nth-child(1){
+    animation-delay: 3s;
+}
+.header .nav li:nth-child(2),
+.sci li:nth-child(2){
+    animation-delay: 3.25s;
+}
+.header .nav li:nth-child(3),
+.sci li:nth-child(3){
+    animation-delay: 3.5s;
+}
+.header .nav li:nth-child(4),
+.sci li:nth-child(4){
+    animation-delay: 3.75s;
+}
+.header .nav li:nth-child(5),
+.sci li:nth-child(5){
+    animation-delay: 4s;
+}
+.header .nav li:nth-child(6),
+.sci li:nth-child(6){
+    animation-delay: 4.25s;
+}
+.header .nav li:nth-child(7){
+    animation-delay: 4.5s;
+}
+.sci{
+    position: absolute;
+    bottom: 15px;
+    right: 30px;
+    display: flex;
+    flex-direction: column;
+}
+.sci li{
+    opacity: 0;
+    list-style: none;
+    padding: 10px 0;
+    text-align: center;
+    animation: fadeInBottom 0.5s linear forwards;
+}
+.sci li a{
+    font-size: 1.2em;
+    color: white;
+}
+#heading{
+    padding-left: 295px;
+}
+.bannerText h3,
+.bannerText h4{
+    font-size: 2.6em;
+    position: relative;
+    margin: 0;
+    color:white;
+    display: inline-block;
+    transform-origin: left;
+    text-transform: uppercase;
+    transform: scaleX(0);
+    animation: revealTextReverse 1s ease-in-out forwards;     
+}
+.bannerText h4{
+    animation-delay: 1s;
+        
+}
+.bannerText h3:before,
+.bannerText h4:before{
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    background-color: #f9484a;
+    background-image: linear-gradient(315deg, #f9484a 0%, #fbd72b 74%);
+    width: 100%;
+    height: 100%;
+    transform-origin: right;
+    animation: revealText 1s ease-in-out forwards;
+    animation-delay: 1s;
+}
+.bannerText h4:before{
+    animation-delay: 2s;
+}
+@keyframes revealText
+{
+    0%
+    {
+	transform: scaleX(1);
+    }
+    100%
+    {
+    	transform: scaleX(0);
+    }
+}
+@keyframes revealTextReverse
+{
+    0%
+    {
+    	transform: scaleX(0);
+    }
+    100%
+    {
+    	transform: scaleX(1);
+    }
+}
+@keyframes fadeIn
+{
+    0%
+    {
+	opacity: 0;
+    }
+    100%
+    {
+    	opacity: 1;
+    }
+}
+@keyframes fadeInBottom
+{
+    0%
+    {
+    	transform: translateY(50px);
+    	opacity: 0;
+    }
+    100%
+    {
+    	transform: translateY(0);
+    	opacity: 1;
+    }
+}
+</style>
+</head>
+<body ng-app="myApp" ng-controller="myCtrl" ng-init="checkuser()">
+    <div class="open">
+        <div class="layer"></div>
+	<div class="layer"></div>
+    </div>
+
+    <div class="header" ng-class="navClass">
+        <img draggable="false" class="logo" src="images/logo.png">
+        <ul class="nav">
+            <li>
+                <a href="index.html" id="active">Home</a>
+            </li>
+            <li>
+                <div class="dropdown">
+                    <a href="" class="dropbtn" ng-show="h2">Student</a>
+                    <div class="dropdown-content" style="min-width:260px;">
+                        <a href="managestud.html" ng-show="h1">Manage Student</a>
+                        <a href="addstud.html" ng-show="h1">Add Student</a>
+                        <a href="viewstud.html" ng-show="h2">View/Edit/Delete Student</a>
+                        <a href="studsubject.html" ng-show="h1">Manage Student Subject</a>
+                    </div>
+                </div>
+            </li>
+            <li>
+                <div class="dropdown">
+                    <a href="" class="dropbtn">Attendance</a>
+                    <div class="dropdown-content" style="min-width:280px;">
+                        <a href="importaddattend.html" ng-show="h3">Import/Add Attendance</a>
+                        <a href="viewattend.html">View/Edit/Delete Attendance</a>
+                        <a href="attendreport.html" ng-show="h2">Attendance Report</a>
+                    </div>
+                </div>
+            </li>
+            <li>
+                <div class="dropdown">
+                    <a href="" class="dropbtn">Examination</a>
+                    <div class="dropdown-content" style="min-width:240px;">
+                        <a href="manageexam.html" ng-show="h1">Manage Examination</a>
+                        <a href="viewmark.html">View/Edit/Delete Marks</a>
+                        <a href="importaddmark.html" ng-show="h3">Import/Add Marks</a>
+                        <a href="marksreport.html" ng-show="h2">Marks Report</a>
+                    </div>
+                </div>
+            </li>
+            <li>
+                <div class="dropdown">
+                    <a href="" class="dropbtn" ng-show="h1">Settings</a>
+                    <div class="dropdown-content" style="min-width:190px;">
+                        <a href="managecourse.html">Manage Course</a>
+                        <a href="managesubject.html">Manage Subject</a>
+                        <a href="managesection.html">Manage Section</a>
+                        <a href="manageusers.html">Manage Users</a>
+                    </div>
+                </div>
+            </li>
+            <li>
+                <a href="sms.html" ng-show="h2">SMS</a>
+            </li>
+            <li>
+                <a href="" ng-click="showConfirm()"><i class="fa fa-sign-out"></i>Logout</a>
+            </li>
+        </ul>
+    </div>
+    
+    <div class="bannerText" id="heading">
+	<br><h3>Student Attendance, Marks management</h3><br>
+        <h4 style="margin-left:200px;">And SMS Portal</h4>
+    </div>
+    <ul class="sci">
+        <li>
+            <a href=""><i class="fa fa-google"></i></a>
+        </li>
+        <li>
+            <a href=""><i class="fa fa-facebook"></i></a>
+        </li>
+        <li>
+            <a href=""><i class="fa fa-instagram"></i></a>
+        </li>
+	<li>
+            <a href=""><i class="fa fa-twitter"></i></a>
+        </li>
+    </ul>
+</body>
+<script>
+var app = angular.module('myApp', []);
+app.controller('myCtrl', function($scope, $window, $http) {
+    $scope.showConfirm = function () {
+        if ($window.confirm("Are you sure want to Logout?")) {
+            $scope.Message = "You clicked YES.";
+            location.href = 'php/logout.php';
+        }else {
+            $scope.Message = "You clicked NO.";
+        }
+    }
+    $scope.navClass = '.header';
+    angular.element($window).bind("scroll", function() {
+        if(window.pageYOffset > 0) {
+            $scope.navClass = 'active';
+        }else {
+            $scope.navClass = '.header';
+        }
+        $scope.$apply();
+    });
+    $scope.checkuser=function(){
+        $scope.h1=false;
+        $scope.h2=false;
+        $scope.h3=false;
+        $http.get('php/checkuser.php')
+        .success(function(data){
+            if(data=="user"){
+                location='login.html';
+            }else if(data=="admin"){
+                $scope.h1=true;
+                $scope.h2=true;
+                $scope.h3=true;
+            }else if(data=="Academic Advisor"){
+                $scope.h2=true;
+            }else if(data=="Subject Lecturer"){
+                $scope.h3=true;
+            }
+        });
+    }
+});
+</script>
+</html>

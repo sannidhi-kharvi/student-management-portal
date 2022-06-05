@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">	
+    <meta charset="utf-8">
+    <title>Student Attendance, Marks Management and SMS Portal</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.9/angular.min.js"></script> 
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="styles/main.css">
+</head>
+<body ng-app="myApp" ng-controller="myCtrl" ng-init="checkuser()">
+    
+    <div class="header" ng-class="navClass" ng-init="show_data()">
+        <img draggable="false" class="logo" src="images/logo.png">
+        <ul class="nav">
+            <li>
+                <a href="index.html">Home</a>
+            </li>
+            <li>
+                <div class="dropdown">
+                    <a href="" class="dropbtn" ng-show="h2">Student</a>
+                    <div class="dropdown-content" style="min-width:260px;">
+                        <a href="managestud.html" ng-show="h1">Manage Student</a>
+                        <a href="addstud.html"ng-show="h1">Add Student</a>
+                        <a href="viewstud.html" ng-show="h2">View/Edit/Delete Student</a>
+                        <a href="studsubject.html" ng-show="h1">Manage Student Subject</a>
+                    </div>
+                </div>
+            </li>
+            <li>
+                <div class="dropdown">
+                    <a href="" class="dropbtn">Attendance</a>
+                    <div class="dropdown-content" style="min-width:280px;">
+                        <a href="importaddattend.html" ng-show="h3">Import/Add Attendance</a>
+                        <a href="viewattend.html">View/Edit/Delete Attendance</a>
+                        <a href="attendreport.html" ng-show="h2">Attendance Report</a>
+                    </div>
+                </div>
+            </li>
+            <li>
+                <div class="dropdown">
+                    <a href="" class="dropbtn" id="active">Examination</a>
+                    <div class="dropdown-content" style="min-width:240px;">
+                        <a href="manageexam.html" ng-show="h1" id="active">Manage Examination</a>
+                        <a href="viewmark.html">View/Edit/Delete Marks</a>
+                        <a href="importaddmark.html" ng-show="h3">Import/Add Marks</a>
+                        <a href="marksreport.html" ng-show="h2">Marks Report</a>
+                    </div>
+                </div>
+            </li>
+            <li>
+                <div class="dropdown">
+                    <a href="" class="dropbtn" ng-show="h1">Settings</a>
+                    <div class="dropdown-content" style="min-width:190px;">
+                        <a href="managecourse.html">Manage Course</a>
+                        <a href="managesubject.html">Manage Subject</a>
+                        <a href="managesection.html">Manage Section</a>
+                        <a href="manageusers.html">Manage Users</a>
+                    </div>
+                </div>
+            </li>
+            <li>
+                <a href="sms.html" ng-show="h2">SMS</a>
+            </li>
+            <li>
+                <a href="" ng-click="showConfirm()"><i class="fa fa-sign-out"></i>Logout</a>
+            </li>
+        </ul>
+    </div>
+    
+    <div class="bannerText">
+        <button class="edit" ng-click="add()" onclick="document.getElementById('id').style.display='block',body.style.overflow = 'hidden';"> Add Record</button>
+        <div id="id" class="modal">
+            <div class="modal-content animate-top">
+                <header> 
+                    Manage Examination
+                </header>
+                <div class="container">   
+                    <form name="myform" novalidate autocomplete="off">
+                        <label class="label1">Exam Name</label>
+                        <input type="text" name="ename" ng-model="ename" onkeyup="this.value = this.value.toUpperCase();" class="form-control" placeholder="Enter Exam Name" ng-readonly="read" required>
+                        <div>
+                        <span ng-show="myform.$submitted || myform.ename.$dirty">
+                            <span class="error" ng-show="myform.ename.$error.required"><i class="fa fa-exclamation-circle"></i> Exam Name Required</span>
+                        </span><br/>
+                        </div>
+                        <label class="label1">Exam Date</label>
+                        <input type="date" id="edate" class="form-control" name="edate" ng-model="edate" ng-model-options="{timezone:'utc'}" ng-value="edate" required>
+                        <span ng-show="myform.$submitted || myform.edate.$dirty">
+                            <span class="error" ng-show="myform.edate.$error.required"><i class="fa fa-exclamation-circle"></i> Exam date Required</span>
+                        </span><br/>
+                        <footer>
+                            <button class="update" type="submit" name="insert" ng-click="insert()">{{btnName}}</button>
+                            <button onclick="document.getElementById('id').style.display='none'" ng-click="reload()" class="delete" style="margin-left: 50px"><i class="fa fa-close"></i> Close</button>
+                        </footer>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <table>
+            <tr>
+                <th ng-click="orderByMe('ename')">Exam Name</th>
+                <th ng-click="orderByMe('edate')">Exam Date</th>
+                <th>Edit</th>
+                <th>Delete</th>
+            </tr>
+            <tr ng-repeat="x in student | orderBy:myOrderBy">
+                <td>{{x.ename}}</td>
+                <td>{{x.edate}}</td>
+                <td>
+                    <button class="edit" onclick="document.getElementById('id').style.display='block',body.style.overflow = 'hidden';" ng-click="update_data(x.ename,x.edate)">
+                        <i class="fa fa-edit"></i> Edit
+                    </button>
+                </td>
+                <td>
+                    <button class="delete" ng-click="delete_data(x.ename,x.edate)">
+                        <i class="fa fa-trash"></i> Delete
+                    </button>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="4" ng-show="student.length==0">No Records Found</td>
+            </tr>
+        </table>  
+    </div>
+</body>
+<script>
+var app = angular.module('myApp', []);
+app.controller('myCtrl', function($scope, $http,$window){
+    var today = new Date().toISOString().split('T')[0];
+    document.getElementsByName("edate")[0].setAttribute('min', today);
+    
+    $scope.showConfirm = function () {
+        if ($window.confirm("Are you sure want to Logout?")) {
+            $scope.Message = "You clicked YES.";
+            location.href = 'php/logout.php';
+        } 
+        else {
+            $scope.Message = "You clicked NO.";
+        }
+    }
+    $scope.navClass = '.header';
+    angular.element($window).bind("scroll", function() {
+        if(window.pageYOffset > 0) {
+            $scope.navClass = 'active';
+        } 
+        else {
+            $scope.navClass = '.header';
+        }
+        $scope.$apply();
+    });
+    $scope.checkuser=function(){
+        $scope.h1=false;
+        $scope.h2=false;
+        $scope.h3=false;
+        $http.get('php/checkuser.php')
+        .success(function(data){
+            if(data=="user"){
+                location='login.html';
+            }else if(data=="admin"){
+                $scope.h1=true;
+                $scope.h2=true;
+                $scope.h3=true;
+            }else if(data=="Academic Advisor"){
+                $scope.h2=true;
+            }else if(data=="Subject Lecturer"){
+                $scope.h3=true;
+            }
+        });
+    }
+    $scope.reload = function() {
+        $window.location.reload();
+    }
+    $scope.orderByMe = function(x) {
+        $scope.myOrderBy = x;
+    }
+    $scope.add = function() {
+        $scope.ename = null;
+        $scope.edate = null;
+        $scope.btnName = "Insert";
+    }
+    $scope.show_data = function() {
+        $http.get("php/examdisplay.php")
+        .success(function(data) {
+            $scope.student = data;
+        });
+    }
+    $scope.insert = function() {
+        if ($scope.ename != null && $scope.edate != null) {
+            $http.post(
+                "php/examinsert.php", {
+                    'ename': $scope.ename,
+                    'edate': $scope.edate,
+                    'enam':$scope.enam,
+                    'edat':$scope.edat,
+                    'btnName': $scope.btnName
+                }
+            ).success(function(data) {
+                alert(data);          
+                $scope.show_data();
+                $window.location.reload();
+            });
+        }
+    }
+    $scope.update_data = function(ename,edate) {
+        $scope.ename = ename;
+        $scope.edate = edate;
+        $scope.enam = ename;
+        $scope.edat = edate;
+        $scope.btnName = "Update";
+        $scope.read=true;
+    }
+    $scope.delete_data = function(ename,edate) {
+        if (confirm("Are you sure you want to delete?")) {
+            $http.post("php/examdelete.php", {
+                'ename': ename,
+                'edate': edate
+            })
+            .success(function(data) {
+                alert(data);
+                $window.location.reload();
+                $scope.show_data();
+            });
+        } else {
+            return false;
+        }
+    }
+});
+</script>
+</html>

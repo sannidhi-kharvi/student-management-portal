@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">	
+    <meta charset="utf-8">
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.9/angular.min.js"></script>
+    <title>Student Attendance, Marks Management and SMS Portal</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"> 
+    <link rel="stylesheet" href="styles/main.css">
+</head>
+<body ng-app="myApp" ng-controller="myCtrl" ng-init="checkuser()">
+    
+    <div class="header" ng-class="navClass">
+        <img draggable="false" class="logo" src="images/logo.png">
+        <ul class="nav">
+            <li>
+                <a href="index.html">Home</a>
+            </li>
+            <li>
+                <div class="dropdown">
+                    <a href="" class="dropbtn" ng-show="h2">Student</a>
+                    <div class="dropdown-content" style="min-width:260px;">
+                        <a href="managestud.html" ng-show="h1">Manage Student</a>
+                        <a href="addstud.html"ng-show="h1">Add Student</a>
+                        <a href="viewstud.html" ng-show="h2">View/Edit/Delete Student</a>
+                        <a href="studsubject.html" ng-show="h1">Manage Student Subject</a>
+                    </div>
+                </div>
+            </li>
+            <li>
+                <div class="dropdown">
+                    <a href="" class="dropbtn">Attendance</a>
+                    <div class="dropdown-content" style="min-width:280px;">
+                        <a href="importaddattend.html" ng-show="h3">Import/Add Attendance</a>
+                        <a href="viewattend.html">View/Edit/Delete Attendance</a>
+                        <a href="attendreport.html" ng-show="h2">Attendance Report</a>
+                    </div>
+                </div>
+            </li>
+            <li>
+                <div class="dropdown">
+                    <a href="" class="dropbtn">Examination</a>
+                    <div class="dropdown-content" style="min-width:240px;">
+                        <a href="manageexam.html" ng-show="h1">Manage Examination</a>
+                        <a href="viewmark.html">View/Edit/Delete Marks</a>
+                        <a href="importaddmark.html" ng-show="h3">Import/Add Marks</a>
+                        <a href="marksreport.html" ng-show="h2">Marks Report</a>
+                    </div>
+                </div>
+            </li>
+            <li>
+                <div class="dropdown">
+                    <a href="" class="dropbtn" ng-show="h1">Settings</a>
+                    <div class="dropdown-content" style="min-width:190px;">
+                        <a href="managecourse.html">Manage Course</a>
+                        <a href="managesubject.html">Manage Subject</a>
+                        <a href="managesection.html">Manage Section</a>
+                        <a href="manageusers.html">Manage Users</a>
+                    </div>
+                </div>
+            </li>
+            <li>
+                <a href="sms.html" id="active" ng-show="h2">SMS</a>
+            </li>
+            <li>
+                <a href="" ng-click="showConfirm()"><i class="fa fa-sign-out"></i>Logout</a>
+            </li>
+        </ul>
+    </div>
+    
+    <div class="bannerText icenter" ng-init="show_data()">
+        <a class="update" href="sms.html" style="float:left;">
+            <i class="fa fa-backward"></i> Back
+        </a>
+        <div class="InputAddOn" style="margin-top:3.0em">
+            <span class="InputAddOn-item">Roll No</span>
+            <input type="text" ng-model="f.rollno" class="InputAddOn-field" placeholder="Search by Roll Number">
+            <span class="InputAddOn-item">Year</span>
+            <select ng-model="f.year" ng-init="drop2()" class="InputAddOn-field">
+                <option value="" disabled selected hidden>Search by Year</option>
+                <option value="">All</option>
+                <option ng-repeat="x in drop2">{{x.year}}</option>
+            </select> 
+            <span class="InputAddOn-item">Semester</span>
+            <select ng-model="f.sem" ng-init="drop3()" class="InputAddOn-field">
+                <option value="" disabled selected hidden>Search by Semester</option>
+                <option value="">All</option>
+                <option ng-repeat="x in drop3">{{x.sem}}</option>
+            </select> 
+            <span class="InputAddOn-item">Course</span>
+            <select ng-model="f.course" ng-init="drop4()" class="InputAddOn-field">
+                <option value="" disabled selected hidden>Search by Course</option>
+                <option value="">All</option>
+                <option ng-repeat="x in drop4">{{x.course}}</option>
+            </select>
+        </div>
+        <div class="InputAddOn2">
+            <span class="InputAddOn-item">Section</span>
+            <select ng-model="f.section" ng-init="drop5()" class="InputAddOn-field1">
+                <option value="" disabled selected hidden>Search by Section</option>
+                <option value="">All</option>
+                <option ng-repeat="x in drop5">{{x.section}}</option>
+            </select>
+            <span class="InputAddOn-item">Exam</span>
+            <select ng-model="f.examid" ng-init="drop10()" class="InputAddOn-field1" ng-change="onCategoryChange()">
+                <option value="" disabled selected hidden>Search by Exam</option>
+                <option value="">All</option>
+                <option ng-repeat="x in drop10">{{x.examid}}</option>
+            </select>
+        </div>
+  
+        <table>
+            <tr>
+                <th ng-click="orderByMe('rollno')">Roll No</th>
+                <th ng-click="orderByMe('name')">Name</th>
+                <th>Year</th>
+                <th>Semester</th>
+                <th>Course</th>
+                <th>Section</th>
+                <th ng-click="orderByMe('ename')">Exam Name</th>
+                <th ng-click="orderByMe('edate')">Exam Date</th>
+                <th>Subject Name</th>
+                <th>Maximum Marks</th>
+                <th>Marks Obtained</th>
+            </tr>
+            <tr ng-show="student.length!=0" ng-repeat="x in ( filter= (student | orderBy:myOrderBy | filter:f))">
+                <td>{{x.rollno}}</td>
+                <td>{{x.name}}</td>
+                <td>{{x.year}}</td>
+                <td>{{x.sem}}</td>
+                <td>{{x.course}}</td>
+                <td>{{x.section}}</td>
+                <td>{{x.ename}}</td>
+                <td>{{x.edate}}</td>
+                <td>{{x.sname}}</td>
+                <td>{{x.max_marks}}</td>
+                <td>{{x.marks_obtain}}</td>
+            </tr>
+            <tr>
+                <td colspan="11" ng-show="student.length==0 || (!(student| filter:f).length)">
+                    No Records Found                
+                </td>
+            </tr>
+        </table>
+        <button class="update" ng-click="insert()" style="margin-bottom: 20px;">
+            <i class="fa fa-send"></i> Send SMS
+        </button>
+    </div>
+</body>
+<script>
+var app = angular.module('myApp', []);
+app.controller('myCtrl', function($scope, $window, $http) {
+    $scope.showConfirm = function () {
+        if ($window.confirm("Are you sure want to Logout?")) {
+            $scope.Message = "You clicked YES.";
+            location.href = 'php/logout.php';
+        } 
+        else {
+            $scope.Message = "You clicked NO.";
+        }
+    }
+    $scope.navClass = '.header';
+    angular.element($window).bind("scroll", function() {
+        if(window.pageYOffset > 0) {
+            $scope.navClass = 'active';
+        } 
+        else {
+            $scope.navClass = '.header';
+        }
+        $scope.$apply();
+    });
+    $scope.checkuser=function(){
+        $scope.h1=false;
+        $scope.h2=false;
+        $scope.h3=false;
+        $http.get('php/checkuser.php')
+        .success(function(data){
+            if(data=="user"){
+                location='login.html';
+            }else if(data=="admin"){
+                $scope.h1=true;
+                $scope.h2=true;
+                $scope.h3=true;
+            }else if(data=="Academic Advisor"){
+                $scope.h2=true;
+            }else if(data=="Subject Lecturer"){
+                $scope.h3=true;
+            }
+        });
+    }
+    $scope.orderByMe = function(x) {
+        $scope.myOrderBy = x;
+    }
+    $scope.drop2=function(){
+        $http.get('php/dropdown2.php')
+        .success(function(data) {
+            $scope.drop2=data;
+        });
+    }
+    $scope.drop3=function(){
+        $http.get('php/dropdown3.php')
+        .success(function(data) {
+            $scope.drop3=data;
+        });
+    }
+    $scope.drop4=function(){
+        $http.get('php/dropdown4.php')
+        .success(function(data) {
+            $scope.drop4=data;
+        });
+    }
+    $scope.drop5=function(){
+        $http.get('php/dropdown5.php')
+        .success(function(data) {
+            $scope.drop5=data;
+        });
+    }
+    $scope.drop10=function(){
+        $http.get('php/dropdown10.php')
+        .success(function(data) {
+            $scope.drop10=data;
+        });
+    }
+    $scope.show_data = function(){
+        $http({
+            method:"POST",
+            url:"php/markdisplay.php"
+        })
+        .success(function(data){
+            $scope.student = data;
+            if(data=="none"){
+                $scope.student='';
+            }
+        });
+    };
+    
+    $scope.exm='';
+    $scope.onCategoryChange = function () {
+        $scope.exm="hello";
+    }
+    $scope.insert = function() {
+        if($scope.exm!=''){
+            $scope.student=$scope.filter;
+            $http.post("php/marksms.php",(JSON.stringify($scope.student)))
+            .success(function(data){
+                if(data==''){
+                    alert("No Records Found");
+                }else{
+                    alert(data);
+                }
+                window.location.reload();
+            });
+        }else{
+            alert("Select Exam");
+        }
+    }
+});
+   </script>
+</html>
